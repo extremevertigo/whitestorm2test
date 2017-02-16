@@ -18,7 +18,7 @@ const app = new WHS.App([
   }, {shadow: true}),
   new WHS.app.ResizeModule(),
   new PHYSICS.WorldModule({
-    ammo: 'https://cdn.rawgit.com/WhitestormJS/physics-module-ammonext/75634e80/vendor/ammo.js',
+    ammo: 'https://rawgit.com/WhitestormJS/physics-module-ammonext/master/vendor/ammo.js',
     gravity: new THREE.Vector3(0, -20, 0)
   })
 ]);
