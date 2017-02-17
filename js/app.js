@@ -14,7 +14,7 @@ const app = new WHS.App([
       shadowmap: {
         type: THREE.PCFSoftShadowMap
       }
-    }   
+    }
   }, {shadow: true}),
   new WHS.app.ResizeModule(),
   new PHYSICS.WorldModule({
@@ -60,7 +60,7 @@ new WHS.SpotLight( {
 //   shadow: {
 //     castShadow: true
 //   },
-  
+
 //   position: [0,30,10]
 // });
 
@@ -97,66 +97,70 @@ new WHS.Icosahedron({ // Softbody (blue).
 const sphere = new WHS.Icosahedron({
   geometry: {
     radius: 4,
-    detial: 3
+    detail: 2
   },
 
   modules: [
     new PHYSICS.SoftbodyModule({
-      friction: 0.8,
-      damping: 0,
-      margin: 0,
-      klst: 0.9,
-      kvst: 0.9,
-      kast: 0.9,
-      piterations: 1,
-      viterations: 0,
-      diterations: 0,
-      citerations: 4,
-      anchorHardness: 0.7,
-      rigidHardness: 1
+      // friction: 0.8,
+      // damping: 0,
+      // margin: 0,
+      // klst: 0.9,
+      // kvst: 0.9,
+      // kast: 0.9,
+      // piterations: 1,
+      // viterations: 0,
+      // diterations: 0,
+      // citerations: 4,
+      // anchorHardness: 0.7,
+      // rigidHardness: 1,
+      mass: 10,
+      pressure: 1000
     })
   ],
 
   material: new THREE.MeshBasicMaterial({color: 0xff0000})
 });
 
-sphere.position.y = 4;
-sphere.addTo(app);
+sphere.addTo(app).then(() => {
+  sphere.position.y = 4;
+
+  for ( i = 0; i < 10; i++) {
+      const newSphere = sphere.clone(true, false);
+      newSphere.native.frustumCulled = false;
+      newSphere.position.y = 5 + 4 * (i + 1);
+      newSphere.addTo(app);
+  };
+});
 sphere.native.frustumCulled = false;
 console.log(sphere);
-
-for ( i = 0; i < 10; i++) {
-    const newSphere = sphere.clone(true, false);
-    newSphere.position.y = 5 + 4 * (i + 1);
-    newSphere.native.frustumCulled = false;
-    newSphere.addTo(app);
-};
 
 // const cloth = new WHS.Plane({
 //   geometry: {
 //     width: 100,
 //     height: 50
 //   },
-
+//
 //   modules: [
 //     new PHYSICS.ClothModule({
 //       mass: 5
 //     })
 //   ],
-
+//
 //   material: new THREE.MeshBasicMaterial({color: 0xff0000})
 // });
-
+//
 // cloth.addTo(app);
 
-new WHS.Plane({
+new WHS.Box({
   geometry: {
     width: 100,
+    depth: 1,
     height: 100
   },
-  
+
   modules: [
-    new PHYSICS.PlaneModule({
+    new PHYSICS.BoxModule({
       mass: 0
     })
   ],
@@ -178,7 +182,7 @@ new WHS.Plane({
 
 //    modules: [
 //     new PHYSICS.PlaneModule({
-//       mass: 0, 
+//       mass: 0,
 //       restitution: 1
 
 //     })
@@ -219,7 +223,7 @@ new WHS.Plane({
 //   position: [0, 10+i, 0]
 
 // });
-// box.addTo(app);  
+// box.addTo(app);
 // };
 
 
@@ -228,4 +232,3 @@ new WHS.Loop(() => {
 }).start(app);
 app.applyModule(new StatsModule(StatsModule.codes.fps));
 app.start();
-
