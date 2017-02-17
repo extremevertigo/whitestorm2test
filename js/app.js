@@ -19,7 +19,8 @@ const app = new WHS.App([
   new WHS.app.ResizeModule(),
   new PHYSICS.WorldModule({
     ammo: 'https://rawgit.com/WhitestormJS/physics-module-ammonext/master/vendor/ammo.js',
-    gravity: new THREE.Vector3(0, -20, 0)
+    gravity: new THREE.Vector3(0, -5.8, 0),
+    softbody: true
   })
 ]);
 console.log(controlsModule);
@@ -66,96 +67,160 @@ new WHS.SpotLight( {
 
 // sphere.addTo(app);
 
-// const sphere = new WHS.Icosahedron({
-//   geometry: {
-//     radius: 3,
-//     detial: 2
-//   },
-
-//   modules: [
-//     new PHYSICS.SoftbodyModule({
-//       mass: 2,
-//       pressure: 100,
-//       damping: 0.01,
-//       friction: 0.3,
-//       klst: 0.6,
-//       kast: 0.6,
-//       margin: 0.05
-//     })
-//   ],
-
-//   position: [0,30,0],
-//   material: new THREE.MeshBasicMaterial({color: 0xff0000})
-// });
-// sphere.native.frustumCulled = false;
-// sphere.addTo(app);
-
-const cloth = new WHS.Plane({
+new WHS.Icosahedron({ // Softbody (blue).
   geometry: {
-    width: 100,
-    height: 50
+    radius: 4,
+    detail: 3
   },
 
   modules: [
-    new PHYSICS.ClothModule({
-      mass: 5
+    new PHYSICS.SoftbodyModule({
+      mass: 15,
+      viterations: 2,
+      diterations: 2,
+      pressure: 1000
+    })
+  ],
+
+  material: new THREE.MeshPhongMaterial({
+    color: new THREE.MeshBasicMaterial({color: 0xff0000})
+  }),
+
+  position: {
+    x: 9,
+    y: 4
+  }
+}).addTo(app).then(obj => { obj.native.frustumCulled = false });
+
+
+
+const sphere = new WHS.Icosahedron({
+  geometry: {
+    radius: 4,
+    detial: 3
+  },
+
+  modules: [
+    new PHYSICS.SoftbodyModule({
+      friction: 0.8,
+      damping: 0,
+      margin: 0,
+      klst: 0.9,
+      kvst: 0.9,
+      kast: 0.9,
+      piterations: 1,
+      viterations: 0,
+      diterations: 0,
+      citerations: 4,
+      anchorHardness: 0.7,
+      rigidHardness: 1
     })
   ],
 
   material: new THREE.MeshBasicMaterial({color: 0xff0000})
 });
 
-cloth.addTo(app);
+sphere.position.y = 4;
+sphere.addTo(app);
+sphere.native.frustumCulled = false;
+console.log(sphere);
 
-const plane = new WHS.Plane({
+for ( i = 0; i < 10; i++) {
+    const newSphere = sphere.clone(true, false);
+    newSphere.position.y = 5 + 4 * (i + 1);
+    newSphere.native.frustumCulled = false;
+    newSphere.addTo(app);
+};
+
+// const cloth = new WHS.Plane({
+//   geometry: {
+//     width: 100,
+//     height: 50
+//   },
+
+//   modules: [
+//     new PHYSICS.ClothModule({
+//       mass: 5
+//     })
+//   ],
+
+//   material: new THREE.MeshBasicMaterial({color: 0xff0000})
+// });
+
+// cloth.addTo(app);
+
+new WHS.Plane({
   geometry: {
     width: 100,
     height: 100
   },
-
-   modules: [
+  
+  modules: [
     new PHYSICS.PlaneModule({
       mass: 0
     })
   ],
 
-  material: new THREE.MeshPhongMaterial({
-    color: 0x447F8B
+  material: new THREE.MeshPhongMaterial({color: 0x447F8B}),
 
-  }),
+  position: [0, -10, 0],
   rotation: {
-    x: - Math.PI / 2
-  },
-  shadow: {
-    recieveShadow:true
-  },
-  position: [0,-3,0]
-});
-plane.addTo(app);
+    x: -Math.PI / 2
+  }
+}).addTo(app);
 
-for (var i = 0; i < 500; i++) {
-  var box = new WHS.Box({
-  geometry: {
-    width: 2,
-    height: 2,
-    depth: 2
-  },
-  modules: [
-    new PHYSICS.BoxModule({
-      mass: 1,
-      restitution:1,
-      autoAlign: true
-    })
-  ],
 
-  material: new THREE.MeshPhongMaterial({
-    color: 0x08f702,
-  }),
-  position: [0, 10+i, 0]
+// const plane = new WHS.Plane({
+//   geometry: {
+//     width: 100,
+//     height: 100
+//   },
 
-});
-box.addTo(app);  
-};
+//    modules: [
+//     new PHYSICS.PlaneModule({
+//       mass: 0, 
+//       restitution: 1
+
+//     })
+//   ],
+
+//   material: new THREE.MeshPhongMaterial({
+//     color: 0x447F8B
+
+//   }),
+//   rotation: {
+//     x: - Math.PI / 2
+//   },
+//   shadow: {
+//     recieveShadow:true
+//   },
+//   position: [0,0,0]
+// });
+// plane.addTo(app);
+
+// for (var i = 0; i < 1; i++) {
+//   var box = new WHS.Box({
+//   geometry: {
+//     width: 2,
+//     height: 2,
+//     depth: 2
+//   },
+//   modules: [
+//     new PHYSICS.BoxModule({
+//       mass: 1,
+//       restitution:1,
+//       autoAlign: true
+//     })
+//   ],
+
+//   material: new THREE.MeshPhongMaterial({
+//     color: 0x08f702,
+//   }),
+//   position: [0, 10+i, 0]
+
+// });
+// box.addTo(app);  
+// };
 
 
 new WHS.Loop(() => {
